@@ -3220,12 +3220,8 @@ class ComputeManager(manager.SchedulerDependentManager):
         if migrate_data:
             is_shared_storage = migrate_data.get('is_shared_storage', True)
         if block_migration or not is_shared_storage:
-            #self.driver.destroy(instance_ref,
-            #                    self._legacy_nw_info(network_info))
-
-            bdi = self._get_instance_volume_block_device_info(ctxt,
-                                                     instance)
-	        self.driver.destroy(instance_ref,
+            bdi = self._get_instance_volume_block_device_info(ctxt, instance_ref)
+            self.driver.destroy(instance_ref,
 			self._legacy_nw_info(network_info),
 			bdi,
 			destroy_disks)
@@ -3234,7 +3230,10 @@ class ComputeManager(manager.SchedulerDependentManager):
             # but we must do it explicitly here when block_migration
             # is false, as the network devices at the source must be
             # torn down
-	        self.driver.destroy(instance_ref, self._legacy_nw_info(network_info), self._get_instance_volume_block_device_info(ctxt, instance_ref), destroy_disk=True)
+            self.driver.destroy(instance_ref,
+                                self._legacy_nw_info(network_info),
+                                self._get_instance_volume_block_device_info(ctxt, instance_ref),
+                                destroy_disk=True)
            # self.driver.unplug_vifs(instance_ref,
            #                         self._legacy_nw_info(network_info))
 
